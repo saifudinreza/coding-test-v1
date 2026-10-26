@@ -3,9 +3,11 @@
 // ATAU pindah ke /login membawa pesan sukses.
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import AuthLayout from '../components/AuthLayout.jsx'
 import Button from '../components/Button.jsx'
-import Card from '../components/Card.jsx'
 import ErrorMessage from '../components/ErrorMessage.jsx'
+import Highlight from '../components/Highlight.jsx'
+import { ArrowRightIcon, CheckIcon } from '../components/Icons.jsx'
 import Input from '../components/Input.jsx'
 import useAuth from '../hooks/useAuth.js'
 import { validateAuthForm } from '../utils/validators.js'
@@ -50,24 +52,32 @@ export default function RegisterPage() {
     }
   }
 
+  // [UBAH - #6] Tampilan memakai AuthLayout (form kiri, panel visual kanan).
   return (
-    <Card className="mx-auto max-w-sm space-y-4">
-      <h1 className="text-xl font-bold">Register</h1>
-      <form onSubmit={handleSubmit} className="space-y-3" noValidate>
-        <Input id="username" name="username" label="Username" value={values.username}
-          onChange={handleChange} error={fieldErrors.username} />
-        <Input id="email" name="email" type="email" label="Email" value={values.email}
-          onChange={handleChange} error={fieldErrors.email} />
-        <Input id="password" name="password" type="password" label="Password" value={values.password}
-          onChange={handleChange} error={fieldErrors.password} />
+    <AuthLayout
+      title={<>Buat<br />akun<br /><Highlight>baru</Highlight></>}
+      subtitle="Daftar dengan username, email, dan password. Password minimal 6 karakter."
+    >
+      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+        <Input id="username" name="username" label="Username" placeholder="Nama tampilan"
+          value={values.username} onChange={handleChange} error={fieldErrors.username} />
+        <Input id="email" name="email" type="email" label="Email" placeholder="nama@email.com"
+          value={values.email} onChange={handleChange} error={fieldErrors.email} />
+        <Input id="password" name="password" type="password" label="Password" placeholder="Minimal 6 karakter"
+          value={values.password} onChange={handleChange} error={fieldErrors.password} />
         {serverError && <ErrorMessage message={serverError} />}
         <Button type="submit" disabled={loading} className="w-full">
+          <CheckIcon />
           {loading ? 'Memproses...' : 'Register'}
         </Button>
       </form>
-      <p className="text-sm">
-        Sudah punya akun? <Link to="/login" className="text-indigo-600 hover:underline">Login</Link>
+      <p className="text-sm text-ink-muted">
+        Sudah punya akun?{' '}
+        <Link to="/login" className="group inline-flex items-center gap-1 font-medium text-ink">
+          Login
+          <ArrowRightIcon className="h-4 w-4 text-mint-ink transition-transform group-hover:translate-x-1" />
+        </Link>
       </p>
-    </Card>
+    </AuthLayout>
   )
 }

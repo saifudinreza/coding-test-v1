@@ -1,1 +1,46 @@
 @import "tailwindcss";
+
+/* [UBAH - #6] Design tokens dari design.md. Setiap variabel di sini otomatis
+   jadi kelas Tailwind, mis. --color-ink -> bg-ink / text-ink, --font-display -> font-display. */
+@theme {
+  --color-ink: #111111;
+  --color-ink-muted: #5b6166;
+  --color-surface: #ffffff;
+  --color-canvas: #eef2f1;
+  --color-sage: #a9b8bc;
+  --color-sage-soft: #dce4e4;
+  --color-mint: #4db396;
+  --color-coral: #f05a3c;
+  --color-glow: #f3f6c0;
+  --color-line: #e3e7e7;
+
+  /* Versi lebih gelap dari mint dan coral khusus untuk TEKS kecil:
+     warna aslinya terlalu terang di atas putih (gagal kontras WCAG AA). */
+  --color-mint-ink: #1f7a5e;
+  --color-coral-ink: #c2391d;
+
+  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-soft: 0 8px 24px rgb(17 17 17 / 0.08);
+}
+
+@layer base {
+  body {
+    @apply bg-canvas font-sans text-ink antialiased;
+    /* Cahaya kuning-hijau lembut di pojok kanan atas, seperti latar referensi */
+    background-image: radial-gradient(60rem 40rem at 100% 0%, var(--color-glow), transparent 60%);
+    background-attachment: fixed;
+  }
+
+  /* Hormati pengaturan "kurangi animasi" di sistem operasi user */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

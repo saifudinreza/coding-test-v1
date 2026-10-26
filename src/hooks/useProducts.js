@@ -82,6 +82,7 @@ export default function useProducts() {
 
   return {
     products: result.products,
+    total: result.total, // [BARU - #6] jumlah produk untuk teks ringkasan di header halaman
     // Selama loading, error lama disembunyikan agar tidak berkedip bersamaan dengan Loader.
     error: loading ? '' : result.error,
     loading,

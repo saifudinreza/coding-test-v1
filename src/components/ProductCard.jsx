@@ -5,6 +5,7 @@
 import { useState } from 'react'
 import { formatPrice, formatRating } from '../utils/formatters.js'
 import Card from './Card.jsx'
+import { StarIcon } from './Icons.jsx'
 
 export default function ProductCard({ product }) {
   // Gambar bisa gagal dimuat meski URL-nya ada (link mati). Kita catat kegagalannya
@@ -13,24 +14,33 @@ export default function ProductCard({ product }) {
   const showImage = product.thumbnail && !imageFailed
 
   return (
-    <Card className="flex flex-col gap-2">
-      {showImage ? (
-        <img
-          src={product.thumbnail}
-          alt={product.title}
-          loading="lazy" // gambar baru dimuat saat hampir terlihat -> halaman terasa lebih cepat
-          onError={() => setImageFailed(true)}
-          className="aspect-square w-full rounded-md bg-slate-100 object-cover"
-        />
-      ) : (
-        <div className="flex aspect-square w-full items-center justify-center rounded-md bg-slate-100 text-xs text-slate-400">
-          Tidak ada gambar
+    // [UBAH - #6] Kartu naik sedikit + bayangan halus saat hover
+    <Card className="group flex flex-col gap-3 p-3 transition duration-200 hover:-translate-y-1 hover:shadow-soft">
+      {/* [UBAH - #6] Gambar dibingkai bentuk arch (atas melengkung penuh) berlatar sage-soft */}
+      <div className="flex aspect-[4/5] items-center justify-center overflow-hidden rounded-t-full rounded-b-2xl bg-sage-soft">
+        {showImage ? (
+          <img
+            src={product.thumbnail}
+            alt={product.title}
+            loading="lazy" // gambar baru dimuat saat hampir terlihat -> halaman terasa lebih cepat
+            onError={() => setImageFailed(true)}
+            // mix-blend-multiply membuat latar putih foto DummyJSON menyatu dengan warna arch
+            className="mt-6 h-4/5 w-4/5 object-contain mix-blend-multiply transition duration-200 group-hover:scale-105"
+          />
+        ) : (
+          <span className="text-xs text-ink-muted">Tidak ada gambar</span>
+        )}
+      </div>
+      <div className="flex flex-1 flex-col gap-2 px-2 pb-2">
+        <h2 className="line-clamp-2 text-sm font-medium">{product.title}</h2>
+        <div className="mt-auto flex items-center justify-between gap-2">
+          <span className="font-display text-xl sm:text-2xl">{formatPrice(product.price)}</span>
+          <span className="inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-xs font-medium">
+            <StarIcon className="h-3.5 w-3.5 text-ink" />
+            <span className="sr-only">Rating</span>
+            {formatRating(product.rating)}
+          </span>
         </div>
-      )}
-      <h2 className="line-clamp-2 text-sm font-medium">{product.title}</h2>
-      <div className="mt-auto flex items-center justify-between text-sm">
-        <span className="font-semibold">{formatPrice(product.price)}</span>
-        <span className="text-slate-500">★ {formatRating(product.rating)}</span>
       </div>
     </Card>
   )

@@ -6,9 +6,10 @@
 // request ke server.
 import { useState } from 'react'
 import Button from './Button.jsx'
+import { SearchIcon } from './Icons.jsx'
 import Input from './Input.jsx'
 
-export default function SearchBar({ initialValue = '', onSearch }) {
+export default function SearchBar({ initialValue = '', onSearch, className = '' }) {
   // Teks yang sedang diketik disimpan di sini (lokal) dan baru "dilaporkan" ke
   // parent saat form dikirim.
   const [text, setText] = useState(initialValue)
@@ -20,10 +21,12 @@ export default function SearchBar({ initialValue = '', onSearch }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-end gap-2" role="search">
-      <div className="flex-1">
-        <Input id="product-search" type="search" placeholder="Cari produk..."
-          value={text} onChange={(e) => setText(e.target.value)} />
+    <form onSubmit={handleSubmit} className={`flex items-center gap-2 ${className}`} role="search">
+      {/* [UBAH - #6] Ikon kaca pembesar di dalam input pil */}
+      <div className="relative flex-1">
+        <SearchIcon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-muted" />
+        <Input id="product-search" type="search" aria-label="Cari produk" placeholder="Cari produk..."
+          className="pl-11" value={text} onChange={(e) => setText(e.target.value)} />
       </div>
       <Button type="submit">Cari</Button>
     </form>

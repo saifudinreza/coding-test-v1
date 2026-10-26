@@ -1,6 +1,10 @@
-import { Link, Outlet, useNavigate } from 'react-router-dom'
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import useAuth from '../hooks/useAuth.js'
 import Button from './Button.jsx'
+
+// [UBAH - #6] Gaya link berbentuk pil, dipakai untuk menu navigasi di header.
+const navLinkClass = ({ isActive }) =>
+  `rounded-full px-3 py-2 text-sm font-medium transition duration-150 ${isActive ? 'bg-ink/5' : 'hover:bg-ink/5'}`
 
 export default function Layout() {
   // [UBAH] Header sekarang bergantung pada status login.
@@ -14,27 +18,34 @@ export default function Layout() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-          <Link to="/" className="font-semibold">Coding Test</Link>
-          {/* [BARU] Sudah login: nama + tombol Logout (langsung keluar). Belum: link Login/Register. */}
-          {user ? (
-            <div className="flex items-center gap-3 text-sm">
-              {/* [BARU] Link Products hanya muncul untuk user login, sesuai pintu yang dijaga ProtectedRoute */}
-              <Link to="/products" className="hover:underline">Products</Link>
-              <span>{user.username}</span>
-              <Button onClick={handleLogout} disabled={loading}>Logout</Button>
-            </div>
-          ) : (
-            <nav className="flex gap-3 text-sm">
-              <Link to="/login" className="hover:underline">Login</Link>
-              <Link to="/register" className="hover:underline">Register</Link>
-            </nav>
-          )}
-        </div>
+    <div className="min-h-screen">
+      {/* [UBAH - #6] Header transparan di atas latar, tanpa garis bawah tebal */}
+      <header className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-5">
+        <Link to="/" className="font-display text-xl font-extrabold tracking-tight">
+          Coding Test<span className="text-mint">.</span>
+        </Link>
+        {/* [BARU] Sudah login: nama + tombol Logout (langsung keluar). Belum: link Login/Register. */}
+        {user ? (
+          <nav className="flex items-center gap-1 sm:gap-2">
+            {/* [BARU] Link Products hanya muncul untuk user login, sesuai pintu yang dijaga ProtectedRoute */}
+            <NavLink to="/products" className={navLinkClass}>Products</NavLink>
+            {/* Chip nama user disembunyikan di HP supaya header tidak terpotong */}
+            <span className="hidden items-center gap-2 rounded-full bg-surface py-1 pl-1 pr-3 text-xs font-medium sm:inline-flex">
+              <span aria-hidden="true" className="flex h-6 w-6 items-center justify-center rounded-full bg-sage-soft uppercase">
+                {user.username.charAt(0)}
+              </span>
+              {user.username}
+            </span>
+            <Button variant="ghost" onClick={handleLogout} disabled={loading}>Logout</Button>
+          </nav>
+        ) : (
+          <nav className="flex items-center gap-1 sm:gap-2">
+            <NavLink to="/login" className={navLinkClass}>Login</NavLink>
+            <NavLink to="/register" className={navLinkClass}>Register</NavLink>
+          </nav>
+        )}
       </header>
-      <main className="mx-auto max-w-5xl px-4 py-8">
+      <main className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:pt-10">
         <Outlet />
       </main>
     </div>

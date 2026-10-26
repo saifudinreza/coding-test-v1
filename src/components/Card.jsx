@@ -1,5 +1,5 @@
+// [UBAH - #6] Kartu putih bersudut besar tanpa garis tepi. Padding diatur pemakai
+// karena tiap kartu punya kebutuhan jarak yang berbeda.
 export default function Card({ className = '', ...props }) {
-  return (
-    <div className={`rounded-lg border border-slate-200 bg-white p-4 shadow-sm ${className}`} {...props} />
-  )
+  return <div className={`rounded-3xl bg-surface ${className}`} {...props} />
 }
