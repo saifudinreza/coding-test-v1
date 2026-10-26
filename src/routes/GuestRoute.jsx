@@ -7,5 +7,9 @@ import useAuth from '../hooks/useAuth.js'
 export default function GuestRoute() {
   const { user } = useAuth()
   // `replace` agar halaman login tidak menumpuk di riwayat (tombol Back tidak balik ke sana).
-  return user ? <Navigate to="/" replace /> : <Outlet />
+  // [UBAH] Tujuannya sekarang /products (bukan Home), sama dengan tujuan setelah login.
+  // Penting: begitu login berhasil, state `user` terisi dan komponen ini ikut
+  // mengalihkan. Kalau tujuannya beda dengan navigate() di LoginPage, dua
+  // perintah pindah halaman akan "berebut".
+  return user ? <Navigate to="/products" replace /> : <Outlet />
 }

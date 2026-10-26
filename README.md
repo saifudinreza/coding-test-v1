@@ -21,10 +21,23 @@ Cara mencoba:
 
 Alur kode: halaman (`pages/`) -> `useAuth()` (`hooks/`) -> `authService` (`services/`). Halaman hanya mengurus form dan pesan; logic ada di hook dan service.
 
+## Products (data dari DummyJSON)
+Halaman `/products` menampilkan produk dari [DummyJSON](https://dummyjson.com/docs/products) dalam grid card (gambar, nama, harga, rating), lengkap dengan pencarian (`/products/search`) dan pagination (`limit` dan `skip`, 12 produk per halaman). Halaman ini hanya bisa dibuka setelah login; yang belum login diarahkan ke `/login`.
+
+Cara mencoba: login, lalu otomatis masuk ke `/products`. Ketik kata kunci (mis. `phone`) dan tekan **Cari**; kosongkan lalu **Cari** untuk menampilkan semua produk lagi.
+
+State yang ditangani:
+- **Loading:** `Loader` selama data dimuat.
+- **Error:** pesan error + tombol **Coba lagi** (untuk mencoba error, matikan internet lalu muat ulang).
+- **Data kosong:** pencarian tanpa hasil menampilkan empty state.
+- **Data tidak valid:** produk tanpa `id` atau `title` dibuang; harga/rating kosong tampil `-`; gambar kosong atau rusak diganti kotak abu-abu (lihat `utils/productNormalizer.js`).
+
+Alur kode: `ProductsPage` -> `useProducts()` -> `productService` (fetch) -> `productNormalizer` (bersihkan data) -> `ProductCard`.
+
 ## Stack
 - **React 19 + Vite** (JavaScript)
 - **Tailwind CSS 4** lewat plugin `@tailwindcss/vite`
-- **React Router** (library tambahan): routing antar halaman, dipakai juga untuk protected route nanti
+- **React Router** (library tambahan): routing antar halaman, termasuk `GuestRoute` dan `ProtectedRoute`
 - **bcryptjs** (library tambahan): hashing password di sisi browser (versi pure JavaScript, tanpa native build)
 - **ESLint**: kualitas kode
 

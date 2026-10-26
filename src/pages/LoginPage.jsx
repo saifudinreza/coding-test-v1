@@ -46,7 +46,7 @@ export default function LoginPage() {
         setServerError(result.error)
         return
       }
-      navigate('/') // sukses -> Home
+      navigate('/products') // [UBAH] sukses -> langsung ke halaman Products
     } catch {
       setServerError('Terjadi kesalahan pada sistem. Silakan coba lagi.')
     }
