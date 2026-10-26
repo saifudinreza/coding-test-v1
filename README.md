@@ -34,6 +34,9 @@ State yang ditangani:
 
 Alur kode: `ProductsPage` -> `useProducts()` -> `productService` (fetch) -> `productNormalizer` (bersihkan data) -> `ProductCard`.
 
+## Desain UI
+Tema visual bersih dan lapang: judul display besar (font Outfit), teks body Inter, latar abu kehijauan dengan cahaya lembut, tombol dan input berbentuk pil, serta bentuk "arch" sebagai bingkai gambar produk dan panel dekoratif. Warna dan font didefinisikan sebagai token Tailwind di `src/index.css` (`@theme`), jadi komponen memakai kelas seperti `bg-ink`, `text-ink-muted`, `font-display`, bukan kode warna langsung. Ikon berupa SVG inline (`components/Icons.jsx`), tanpa library tambahan.
+
 ## Stack
 - **React 19 + Vite** (JavaScript)
 - **Tailwind CSS 4** lewat plugin `@tailwindcss/vite`

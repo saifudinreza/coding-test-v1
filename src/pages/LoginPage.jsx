@@ -4,9 +4,11 @@
 // dari Register / Logout lewat state router.
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import AuthLayout from '../components/AuthLayout.jsx'
 import Button from '../components/Button.jsx'
-import Card from '../components/Card.jsx'
 import ErrorMessage from '../components/ErrorMessage.jsx'
+import Highlight from '../components/Highlight.jsx'
+import { ArrowRightIcon, CheckIcon } from '../components/Icons.jsx'
 import Input from '../components/Input.jsx'
 import useAuth from '../hooks/useAuth.js'
 import { validateAuthForm } from '../utils/validators.js'
@@ -52,26 +54,37 @@ export default function LoginPage() {
     }
   }
 
+  // [UBAH - #6] Tampilan memakai AuthLayout (form kiri, panel visual kanan).
   return (
-    <Card className="mx-auto max-w-sm space-y-4">
-      <h1 className="text-xl font-bold">Login</h1>
+    <AuthLayout
+      title={<>Selamat<br />datang<br /><Highlight>kembali</Highlight></>}
+      subtitle="Masuk dengan email dan password untuk melihat katalog produk."
+    >
       {/* [PR #3 poin 1] Notice hijau disembunyikan saat ada error, agar tidak tampil bersamaan dengan error merah */}
       {!serverError && notice && (
-        <p role="status" className="rounded-md bg-green-50 p-3 text-sm text-green-700">{notice}</p>
+        <p role="status" className="inline-flex w-fit items-center gap-2 rounded-full bg-mint/15 px-4 py-2 text-xs font-medium text-mint-ink">
+          <CheckIcon className="h-3.5 w-3.5" />
+          {notice}
+        </p>
       )}
-      <form onSubmit={handleSubmit} className="space-y-3" noValidate>
-        <Input id="email" name="email" type="email" label="Email" value={values.email}
-          onChange={handleChange} error={fieldErrors.email} />
-        <Input id="password" name="password" type="password" label="Password" value={values.password}
-          onChange={handleChange} error={fieldErrors.password} />
+      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+        <Input id="email" name="email" type="email" label="Email" placeholder="nama@email.com"
+          value={values.email} onChange={handleChange} error={fieldErrors.email} />
+        <Input id="password" name="password" type="password" label="Password" placeholder="Password kamu"
+          value={values.password} onChange={handleChange} error={fieldErrors.password} />
         {serverError && <ErrorMessage message={serverError} />}
         <Button type="submit" disabled={loading} className="w-full">
+          <CheckIcon />
           {loading ? 'Memproses...' : 'Login'}
         </Button>
       </form>
-      <p className="text-sm">
-        Belum punya akun? <Link to="/register" className="text-indigo-600 hover:underline">Register</Link>
+      <p className="text-sm text-ink-muted">
+        Belum punya akun?{' '}
+        <Link to="/register" className="group inline-flex items-center gap-1 font-medium text-ink">
+          Register
+          <ArrowRightIcon className="h-4 w-4 text-mint-ink transition-transform group-hover:translate-x-1" />
+        </Link>
       </p>
-    </Card>
+    </AuthLayout>
   )
 }
