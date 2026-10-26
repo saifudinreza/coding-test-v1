@@ -21,6 +21,8 @@ export default function Layout() {
           {/* [BARU] Sudah login: nama + tombol Logout (langsung keluar). Belum: link Login/Register. */}
           {user ? (
             <div className="flex items-center gap-3 text-sm">
+              {/* [BARU] Link Products hanya muncul untuk user login, sesuai pintu yang dijaga ProtectedRoute */}
+              <Link to="/products" className="hover:underline">Products</Link>
               <span>{user.username}</span>
               <Button onClick={handleLogout} disabled={loading}>Logout</Button>
             </div>
