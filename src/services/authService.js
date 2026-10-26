@@ -43,7 +43,9 @@ function respond(data) {
 // Mengembalikan user jika cocok, atau null jika email tidak ada / password salah.
 async function verifyCredentials(users, email, password) {
   const user = users.find((u) => u.email === email)
-  if (!user) return null
+  // [PR #3 poin 2] Data lama di localStorage bisa tidak punya passwordHash;
+  // tanpa pengecekan ini bcrypt.compare melempar error "Illegal arguments".
+  if (!user || !user.passwordHash) return null
   const match = await bcrypt.compare(password, user.passwordHash)
   return match ? user : null
 }
@@ -67,8 +69,10 @@ export async function register({ username, email, password }) {
   }
 
   // id naik otomatis: 1 untuk user pertama, lalu 2, 3, dst.
+  // [PR #3 poin 5] Pakai id TERBESAR + 1 (bukan id elemen terakhir) agar tidak
+  // menghasilkan id ganda jika urutan array berubah atau ada user yang dihapus.
   const newUser = {
-    id: users.length ? users[users.length - 1].id + 1 : 1,
+    id: users.length ? Math.max(...users.map((u) => u.id || 0)) + 1 : 1,
     username: username.trim(),
     email: normalizedEmail,
     // [UBAH] Simpan HASH bcrypt, bukan password asli.

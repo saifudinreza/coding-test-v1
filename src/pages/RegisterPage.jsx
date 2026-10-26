@@ -18,8 +18,11 @@ export default function RegisterPage() {
   const [serverError, setServerError] = useState('') // error dari response API
 
   // Satu handler untuk semua input: pakai atribut `name` sebagai kunci state.
+  // [PR #3 poin 6] Saat user mengetik ulang, error field itu langsung dihapus.
   function handleChange(e) {
-    setValues({ ...values, [e.target.name]: e.target.value })
+    const { name, value } = e.target
+    setValues((prev) => ({ ...prev, [name]: value }))
+    if (fieldErrors[name]) setFieldErrors((prev) => ({ ...prev, [name]: '' }))
   }
 
   async function handleSubmit(e) {
@@ -31,15 +34,20 @@ export default function RegisterPage() {
     setFieldErrors(errors)
     if (Object.keys(errors).length > 0) return
 
-    // 2. Panggil register. Contoh error: { error: 'User sudah terdaftar' }.
-    const result = await register(values)
-    if (result.error) {
-      setServerError(result.error)
-      return
-    }
+    // [PR #3 poin 7] try/catch menangkap error runtime (mis. localStorage diblokir).
+    try {
+      // 2. Panggil register. Contoh error: { error: 'User sudah terdaftar' }.
+      const result = await register(values)
+      if (result.error) {
+        setServerError(result.error)
+        return
+      }
 
-    // 3. Sukses: ke halaman login, pesan dikirim lewat state router.
-    navigate('/login', { state: { message: result.response } })
+      // 3. Sukses: ke halaman login, pesan dikirim lewat state router.
+      navigate('/login', { state: { message: result.response } })
+    } catch {
+      setServerError('Terjadi kesalahan pada sistem. Silakan coba lagi.')
+    }
   }
 
   return (

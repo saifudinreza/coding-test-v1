@@ -2,6 +2,7 @@
 // supaya aturan validasinya ada di satu tempat (bukan tersebar di komponen).
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const MIN_PASSWORD_LENGTH = 6
 
 // Menerima object nilai form, mengembalikan object error per field.
 // Object kosong ({}) artinya semua field valid.
@@ -21,8 +22,13 @@ export function validateAuthForm(values) {
     errors.email = 'Format email tidak valid'
   }
 
-  if (!values.password) {
+  // [PR #3 poin 4] trim() agar password yang hanya berisi spasi ditolak.
+  if (!values.password.trim()) {
     errors.password = 'Password wajib diisi'
+  } else if ('username' in values && values.password.length < MIN_PASSWORD_LENGTH) {
+    // Panjang minimum hanya saat Register (ada `username`); di Login tidak dicek
+    // agar akun yang sudah ada tidak terkunci oleh aturan baru.
+    errors.password = `Password minimal ${MIN_PASSWORD_LENGTH} karakter`
   }
 
   return errors

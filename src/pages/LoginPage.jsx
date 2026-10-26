@@ -22,8 +22,11 @@ export default function LoginPage() {
   // Pesan dari halaman sebelumnya, mis. "User berhasil ditambahkan" / "User berhasil logout".
   const notice = location.state?.message
 
+  // [PR #3 poin 6] Saat user mengetik ulang, error field itu langsung dihapus.
   function handleChange(e) {
-    setValues({ ...values, [e.target.name]: e.target.value })
+    const { name, value } = e.target
+    setValues((prev) => ({ ...prev, [name]: value }))
+    if (fieldErrors[name]) setFieldErrors((prev) => ({ ...prev, [name]: '' }))
   }
 
   async function handleSubmit(e) {
@@ -34,20 +37,28 @@ export default function LoginPage() {
     setFieldErrors(errors)
     if (Object.keys(errors).length > 0) return
 
-    // Contoh gagal: { error: 'Email atau password salah' }
-    const result = await login(values)
-    if (result.error) {
-      setServerError(result.error)
-      return
+    // [PR #3 poin 7] try/catch menangkap error runtime (mis. localStorage diblokir)
+    // supaya user melihat pesan ramah, bukan halaman rusak.
+    try {
+      // Contoh gagal: { error: 'Email atau password salah' }
+      const result = await login(values)
+      if (result.error) {
+        setServerError(result.error)
+        return
+      }
+      navigate('/') // sukses -> Home
+    } catch {
+      setServerError('Terjadi kesalahan pada sistem. Silakan coba lagi.')
     }
-
-    navigate('/') // sukses -> Home
   }
 
   return (
     <Card className="mx-auto max-w-sm space-y-4">
       <h1 className="text-xl font-bold">Login</h1>
-      {notice && <p role="status" className="rounded-md bg-green-50 p-3 text-sm text-green-700">{notice}</p>}
+      {/* [PR #3 poin 1] Notice hijau disembunyikan saat ada error, agar tidak tampil bersamaan dengan error merah */}
+      {!serverError && notice && (
+        <p role="status" className="rounded-md bg-green-50 p-3 text-sm text-green-700">{notice}</p>
+      )}
       <form onSubmit={handleSubmit} className="space-y-3" noValidate>
         <Input id="email" name="email" type="email" label="Email" value={values.email}
           onChange={handleChange} error={fieldErrors.email} />
