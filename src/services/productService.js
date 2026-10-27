@@ -17,6 +17,14 @@ export function getProducts({ limit = PAGE_SIZE, skip = 0 } = {}) {
   return apiGet('/products', { limit, skip })
 }
 
+// [BARU - #8] Mengambil SATU produk lengkap berdasarkan id.
+// Id yang tidak ada dibalas DummyJSON dengan status 404 (error.status === 404).
+// encodeURIComponent mengamankan id dari URL (mis. "../" atau spasi) karena id
+// diambil langsung dari alamat yang bisa diketik user.
+export function getProductById(id) {
+  return apiGet(`/products/${encodeURIComponent(id)}`)
+}
+
 // Mencari produk berdasarkan kata kunci `q`.
 // Bentuk response-nya sama persis dengan getProducts, jadi UI tidak perlu
 // membedakan keduanya.

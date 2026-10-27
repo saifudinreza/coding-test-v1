@@ -5,12 +5,19 @@
 // ke kurir, sedang menunggu atau tidak, ada masalah atau tidak, halaman ke berapa.
 // Pelayan cukup bertanya ke manajer: "sekarang kondisinya bagaimana?"
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { PAGE_SIZE, getProducts, searchProducts } from '../services/productService.js'
 import { normalizeProducts } from '../utils/productNormalizer.js'
 
 export default function useProducts() {
-  const [query, setQuery] = useState('') // kata kunci pencarian yang sedang aktif
-  const [page, setPage] = useState(1) // halaman aktif, dimulai dari 1
+  // [UBAH - #8] Kata kunci dan halaman sekarang disimpan di URL (?q=phone&page=2), bukan
+  // di state biasa. Alasannya: setelah membuka detail produk lalu menekan "Kembali",
+  // user kembali ke daftar yang SAMA (halaman dan pencarian tidak hilang). Bonusnya,
+  // URL daftar bisa dibagikan. Nilai yang dikembalikan hook ini tidak berubah.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const query = searchParams.get('q') ?? '' // kata kunci pencarian yang sedang aktif
+  // Halaman dimulai dari 1; nilai ngawur di URL (?page=abc atau 0) dianggap halaman 1.
+  const page = Math.max(1, parseInt(searchParams.get('page'), 10) || 1)
   const [attempt, setAttempt] = useState(0) // naik 1 setiap kali user klik "Coba lagi"
 
   // Hasil request terakhir. `key` mencatat "hasil ini jawaban untuk permintaan yang mana".
@@ -69,8 +76,18 @@ export default function useProducts() {
   // Dipanggil SearchBar. Mencari kata baru selalu mulai dari halaman 1,
   // karena halaman 5 dari hasil lama tidak ada artinya untuk hasil baru.
   function search(term) {
-    setQuery(term)
-    setPage(1)
+    // Parameter baru dibuat dari nol: otomatis kembali ke halaman 1 (tanpa ?page).
+    setSearchParams(term ? { q: term } : {})
+  }
+
+  // Pindah halaman sambil mempertahankan kata kunci. Halaman 1 tidak ditulis di URL.
+  function setPage(nextPage) {
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev)
+      if (nextPage > 1) params.set('page', String(nextPage))
+      else params.delete('page')
+      return params
+    })
   }
 
   // Tombol "Coba lagi": cukup ganti tiket supaya request diulang.
