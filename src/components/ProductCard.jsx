@@ -3,19 +3,30 @@
 // Analogi: ini seperti kartu etalase di toko. Dia hanya menampilkan apa yang
 // diberikan; tidak tahu dari mana barangnya datang.
 import { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { formatPrice, formatRating } from '../utils/formatters.js'
 import Card from './Card.jsx'
 import { StarIcon } from './Icons.jsx'
 
 export default function ProductCard({ product }) {
+  // [BARU - #8] Posisi daftar saat ini (mis. /products?page=3&q=phone) dikirim ke halaman
+  // detail lewat state router, supaya tombol "Kembali" membawa user ke daftar yang sama.
+  const location = useLocation()
   // Gambar bisa gagal dimuat meski URL-nya ada (link mati). Kita catat kegagalannya
   // lewat onError supaya bisa menampilkan kotak abu-abu pengganti, bukan ikon rusak.
   const [imageFailed, setImageFailed] = useState(false)
   const showImage = product.thumbnail && !imageFailed
 
   return (
-    // [UBAH - #6] Kartu naik sedikit + bayangan halus saat hover
-    <Card className="group flex flex-col gap-3 p-3 transition duration-200 hover:-translate-y-1 hover:shadow-soft">
+    // [UBAH - #8] Seluruh kartu menjadi link ke halaman detail (bisa diklik dan difokus
+    // dengan keyboard). `group` dipindah ke Link supaya efek hover tetap berjalan.
+    <Link
+      to={`/products/${product.id}`}
+      state={{ from: `${location.pathname}${location.search}` }}
+      className="group block h-full rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mint focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
+    >
+    {/* [UBAH - #6] Kartu naik sedikit + bayangan halus saat hover */}
+    <Card className="flex h-full flex-col gap-3 p-3 transition duration-200 group-hover:-translate-y-1 group-hover:shadow-soft">
       {/* [UBAH - #6] Gambar dibingkai bentuk arch (atas melengkung penuh) berlatar sage-soft */}
       <div className="flex aspect-[4/5] items-center justify-center overflow-hidden rounded-t-full rounded-b-2xl bg-sage-soft">
         {showImage ? (
@@ -43,5 +54,6 @@ export default function ProductCard({ product }) {
         </div>
       </div>
     </Card>
+    </Link>
   )
 }

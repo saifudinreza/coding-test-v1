@@ -32,6 +32,51 @@ export function normalizeProduct(raw) {
   }
 }
 
+// [BARU - #8] Teks apa pun -> string rapi; selain string (undefined, angka, dll.) -> ''.
+// String kosong nanti ditampilkan sebagai "-" oleh UI (lihat formatText).
+function toText(value) {
+  return typeof value === 'string' ? value.trim() : ''
+}
+
+// [BARU - #8] Membersihkan SATU ulasan. Ulasan rusak (bukan object, atau tanpa
+// komentar DAN tanpa rating) dibuang. Email reviewer sengaja tidak dibawa:
+// itu data pribadi dan tidak perlu ditampilkan.
+function normalizeReview(raw) {
+  if (!raw || typeof raw !== 'object') return null
+  const comment = toText(raw.comment)
+  const rating = toNumberOrNull(raw.rating)
+  if (!comment && rating === null) return null
+  return {
+    reviewerName: toText(raw.reviewerName) || 'Anonim',
+    rating,
+    comment,
+    date: toText(raw.date),
+  }
+}
+
+// [BARU - #8] Membersihkan SATU produk untuk halaman detail. Memakai ulang
+// normalizeProduct (aturan id/title/harga/rating yang sama), lalu menambah
+// field detail. Mengembalikan null kalau produknya tidak layak tampil.
+export function normalizeProductDetail(raw) {
+  const base = normalizeProduct(raw)
+  if (!base) return null
+
+  // Gambar utama: gambar pertama dari `images`, kalau tidak ada pakai thumbnail.
+  const images = Array.isArray(raw.images) ? raw.images.filter((src) => typeof src === 'string' && src) : []
+
+  return {
+    ...base,
+    image: images[0] || base.thumbnail,
+    brand: toText(raw.brand), // banyak produk DummyJSON tidak punya brand
+    category: toText(raw.category),
+    description: toText(raw.description),
+    stock: toNumberOrNull(raw.stock),
+    warranty: toText(raw.warrantyInformation),
+    shipping: toText(raw.shippingInformation),
+    reviews: Array.isArray(raw.reviews) ? raw.reviews.map(normalizeReview).filter(Boolean) : [],
+  }
+}
+
 // Membersihkan DAFTAR produk. Aman dipanggil dengan data apa pun:
 // kalau bukan array (response aneh), hasilnya array kosong, bukan error.
 export function normalizeProducts(rawList) {

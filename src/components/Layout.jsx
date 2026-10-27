@@ -1,4 +1,5 @@
-import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import useAuth from '../hooks/useAuth.js'
 import Button from './Button.jsx'
 
@@ -10,6 +11,13 @@ export default function Layout() {
   // [UBAH] Header sekarang bergantung pada status login.
   const { user, logout, loading } = useAuth()
   const navigate = useNavigate()
+  const { pathname } = useLocation()
+
+  // [BARU - #8] Setiap pindah halaman, kembali ke atas. Tanpa ini, user yang membuka
+  // detail dari kartu di bagian bawah daftar akan "mendarat" di tengah/bawah halaman.
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
 
   async function handleLogout() {
     const result = await logout()
@@ -46,7 +54,12 @@ export default function Layout() {
         )}
       </header>
       <main className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:pt-10">
-        <Outlet />
+        {/* [BARU - #8] key = path: setiap pindah halaman, pembungkus ini dibuat ulang sehingga
+            animasi animate-page-in berjalan lagi. Pindah halaman daftar (?page=2) memakai path
+            yang sama, jadi tidak ikut beranimasi. */}
+        <div key={pathname} className="animate-page-in">
+          <Outlet />
+        </div>
       </main>
     </div>
   )

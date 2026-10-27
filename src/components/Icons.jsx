@@ -41,3 +41,12 @@ export function LockIcon(props) {
 export function BagIcon(props) {
   return <Icon {...props}><path d="M5 8h14l-1 12H6zM9 8V6.5a3 3 0 016 0V8" /></Icon>
 }
+
+// [BARU - #8] Tanda + / − untuk Accordion.
+export function PlusIcon(props) {
+  return <Icon {...props}><path d="M12 5v14M5 12h14" /></Icon>
+}
+
+export function MinusIcon(props) {
+  return <Icon {...props}><path d="M5 12h14" /></Icon>
+}

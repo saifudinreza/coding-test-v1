@@ -3,6 +3,7 @@ import Layout from '../components/Layout.jsx'
 import HomePage from '../pages/HomePage.jsx'
 import LoginPage from '../pages/LoginPage.jsx'
 import NotFoundPage from '../pages/NotFoundPage.jsx'
+import ProductDetailPage from '../pages/ProductDetailPage.jsx'
 import ProductsPage from '../pages/ProductsPage.jsx'
 import RegisterPage from '../pages/RegisterPage.jsx'
 import GuestRoute from './GuestRoute.jsx'
@@ -21,6 +22,8 @@ export default function AppRoutes() {
         {/* [BARU] Halaman khusus user login; ProtectedRoute mengantar tamu ke /login */}
         <Route element={<ProtectedRoute />}>
           <Route path="products" element={<ProductsPage />} />
+          {/* [BARU - #8] Detail produk: id diambil dari URL lewat useParams */}
+          <Route path="products/:id" element={<ProductDetailPage />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Route>
